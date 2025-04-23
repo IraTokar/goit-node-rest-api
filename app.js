@@ -6,7 +6,7 @@ import 'dotenv/config';
 
 import contactsRouter from "./routes/contactsRouter.js";
 
-const { DB_HOST } = process.env;
+const { DB_HOST, PORT = 3000 } = process.env;
 
 const app = express();
 
@@ -28,9 +28,9 @@ app.use((err, req, res, next) => {
 mongoose
   .connect(DB_HOST)
   .then(() => {
-    app.listen(3000, () => {
+    app.listen(PORT, () => {
       console.log('Database connection successful');
-      console.log("Server is running. Use our API on port: 3000");
+      console.log(`Server is running. Use our API on port: ${PORT}`);
     });
   })
   .catch(error => {
