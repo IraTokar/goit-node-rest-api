@@ -26,8 +26,12 @@ const contactSchema = new Schema({
 contactSchema.post('save', handleSaveError);
 contactSchema.post('findOneAndDelete', handleSaveError);
 
+
 const Contact = model('contact', contactSchema);
 
 export default Contact;
+
+
+
 
 
