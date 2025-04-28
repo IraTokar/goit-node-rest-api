@@ -1,8 +1,7 @@
 import { Schema, model } from "mongoose";
-import { handleSaveError } from "./hooks";
+import handleSaveError from './hooks.js';
 
-export const emailRegexp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-export const phoneRegexp = /(\s*)?(\+)?([- _():=+]?\d[- _():=+]?){10,14}(\s*)?/;
+import { emailRegexp,phoneRegexp } from "../constants/contactConstans.js";
 
 const contactSchema = new Schema({
     name: {
