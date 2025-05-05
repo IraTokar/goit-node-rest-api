@@ -1,6 +1,7 @@
 import Contact from "../models/contact.js";
 
-export const listContacts = () => Contact.find({}, '-createdAt -updatedAt')
+export const listContacts = (owner, { skip = 0, limit = 20 } = {}) => Contact.find({owner}, '-createdAt -updatedAt').skip(Number(skip))
+    .limit(Number(limit));
 
 export const getContactById = id => Contact.findById(id);
 
