@@ -3,6 +3,7 @@ import handleSaveError from './hooks.js';
 
 import { emailRegexp,phoneRegexp } from "../constants/contactConstans.js";
 
+
 const contactSchema = new Schema({
     name: {
         type: String,
@@ -20,6 +21,11 @@ const contactSchema = new Schema({
         type: Boolean,
         default: false,
     },
+    owner: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+        required: true,
+    }
 }, { versionKey: false, timestamps: true });
 
 contactSchema.post('save', handleSaveError);
