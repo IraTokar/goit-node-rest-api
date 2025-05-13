@@ -3,8 +3,12 @@ import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../helpers/ctrlWrapper.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import path from "path";
+import authRouter from "../routes/authRouter.js";
 
 const { SECRET_KEY } = process.env;
+
+const avatarsPath = path.resolve('public', 'avatars');
 
 const register = async (req, res) => {
     const { email, password } = req.body;
@@ -69,12 +73,26 @@ const logout = async (req, res) => {
     res.status(204).json();
 };
 
+const updateAvatar = async (req, res) => {
+    const { _id } = req.user;
+    const { path: oldPath, filename } = req.file;
+
+    const newPath = path.join(avatarsPath, filename);
+
+    await fs.rename(oldPath, newPath);
+
+    const avatarURL = path.join('avatars', filename);
+    await User.findByIdAndUpdate(id, { avatarURL });
+    return res.json({ avatarURL });
+}
+
 
 export default {
     register: ctrlWrapper(register),
     login: ctrlWrapper(login),
     getCurrent: ctrlWrapper(getCurrent),
     logout: ctrlWrapper(logout),
+    updateAvatar: ctrlWrapper(updateAvatar),
 };
 
 
