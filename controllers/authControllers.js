@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import path from "path";
 import authRouter from "../routes/authRouter.js";
+import gravatar from 'gravatar'; 
 
 const { SECRET_KEY } = process.env;
 
@@ -16,11 +17,13 @@ const register = async (req, res) => {
 
     if (user) {
         throw HttpError(409, 'Email already in use')
-    }
+    };
 
-    const hashPassword = await bcrypt.hash(password, 10)
+    const hashPassword = await bcrypt.hash(password, 10);
+    
+    const avatarURL = gravatar.url(email);
 
-    const newUser = User.create({ ...req.body, password: hashPassword });
+    const newUser = User.create({ ...req.body, password: hashPassword, avatarURL });
 
     res.status(201).json({
         email: newUser.email,
