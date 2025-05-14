@@ -3,9 +3,11 @@ import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../helpers/ctrlWrapper.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import fs from 'fs/promises';
 import path from "path";
 import authRouter from "../routes/authRouter.js";
 import gravatar from 'gravatar'; 
+
 
 const { SECRET_KEY } = process.env;
 
@@ -78,14 +80,16 @@ const logout = async (req, res) => {
 
 const updateAvatar = async (req, res) => {
     const { _id } = req.user;
-    const { path: oldPath, filename } = req.file;
+    const { path: oldPath, originalname } = req.file;
+
+    const filename = `${_id}_${originalname}`;
 
     const newPath = path.join(avatarsPath, filename);
 
     await fs.rename(oldPath, newPath);
 
     const avatarURL = path.join('avatars', filename);
-    await User.findByIdAndUpdate(id, { avatarURL });
+    await User.findByIdAndUpdate(_id, { avatarURL });
     return res.json({ avatarURL });
 }
 
