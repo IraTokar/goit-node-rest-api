@@ -5,8 +5,8 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import fs from 'fs/promises';
 import path from "path";
-import authRouter from "../routes/authRouter.js";
 import gravatar from 'gravatar'; 
+import { Jimp } from "jimp";
 
 
 const { SECRET_KEY } = process.env;
@@ -85,6 +85,12 @@ const updateAvatar = async (req, res) => {
     const filename = `${_id}_${originalname}`;
 
     const newPath = path.join(avatarsPath, filename);
+
+    const image = await Jimp.read(oldPath);
+    await image
+        .resize(250, 250)
+        .write(newPath)
+    
 
     await fs.rename(oldPath, newPath);
 
