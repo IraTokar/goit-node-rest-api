@@ -3,6 +3,7 @@ import { Schema, model } from "mongoose";
 import handleSaveError from "./hooks.js";
 import { emailRegexp } from "../constants/contactConstans.js";
 
+
 const userSchema = new Schema(
     {
         password: {
@@ -25,6 +26,10 @@ const userSchema = new Schema(
             type: String,
             default: null,
         },
+        avatarURL: {
+            type: String,
+            required: true,
+        }
     }, { versionKey: false, timestamps: true }
 );
 
