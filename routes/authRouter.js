@@ -8,6 +8,8 @@ import upload from '../middlewares/upload.js';
 const authRouter = express.Router();
 
 authRouter.post('/register', validateBody(schemas.registerSchema), authControllers.register);
+authRouter.get('/verify/:verificationToken', authControllers.verifyEmail);
+authRouter.post('/verify', validateBody(schemas.emailSchema),authControllers.resendVerifyEmail);
 authRouter.post('/login', validateBody(schemas.loginSchema), authControllers.login);
 authRouter.get('/current', authenticate, authControllers.getCurrent);
 authRouter.post('/logout', authenticate, authControllers.logout);
