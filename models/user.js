@@ -28,7 +28,7 @@ const userSchema = new Schema(
         },
         avatarURL: {
             type: String,
-            required: true,
+            // required: true,
         }
     }, { versionKey: false, timestamps: true }
 );
@@ -40,3 +40,26 @@ userSchema.post('findOneAndUpdate', handleSaveError);
 const User = model('user', userSchema);
 
 export default User;    
+
+
+// const updateAvatar = async (req, res) => {
+//     const { _id } = req.user;
+//     const { path: oldPath, originalname } = req.file;
+
+//     const filename = `${_id}_${originalname}`;
+  
+//     const newPath = path.join(avatarsPath, filename);
+  
+//     Jimp.read(oldPath, (err, img) => {
+//       if (err) throw err;
+//       img.resize(250, 250).write(newPath);
+//     });
+  
+//     await fs.rename(oldPath, newPath);
+  
+//     const avatarURL = path.join('avatars', filename);
+//     await User.findByIdAndUpdate(_id,{ avatarURL});
+//     return res.json({ avatarURL });
+//   };
+
+  

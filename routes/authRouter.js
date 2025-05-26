@@ -16,4 +16,3 @@ authRouter.patch('/avatars', authenticate, upload.single('avatar'), authControll
 export default authRouter;
 
 
-

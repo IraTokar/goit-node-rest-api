@@ -25,11 +25,13 @@ const register = async (req, res) => {
     
     const avatarURL = gravatar.url(email);
 
-    const newUser = User.create({ ...req.body, password: hashPassword, avatarURL });
+    const newUser = await User.create({ ...req.body, password: hashPassword, avatarURL });
 
     res.status(201).json({
+        user:{
         email: newUser.email,
         subscription: newUser.subscription,
+        }
     })
 };
 
@@ -37,12 +39,12 @@ const login = async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-        throw ctrlWrapper(401, 'Email or password is wrong');
+        throw HttpError(401, 'Email or password is wrong');
     };
 
     const comparePassword = await bcrypt.compare(password, user.password);
     if (!comparePassword) {
-        throw ctrlWrapper(401, 'Email or password is wrong');
+        throw HttpError(401, 'Email or password is wrong');
     };
 
     const payload = {
@@ -86,18 +88,39 @@ const updateAvatar = async (req, res) => {
 
     const newPath = path.join(avatarsPath, filename);
 
-    const image = await Jimp.read(oldPath);
-    await image
-        .resize(250, 250)
-        .write(newPath)
+    Jimp.read(oldPath, (err, img) => {
+        if (err) throw err;
+        img
+            .resize(250, 250)
+            .write(newPath);
+    });
     
-
     await fs.rename(oldPath, newPath);
 
     const avatarURL = path.join('avatars', filename);
     await User.findByIdAndUpdate(_id, { avatarURL });
     return res.json({ avatarURL });
 }
+
+// const updateAvatar = async (req, res) => {
+//     const { _id } = req.user;
+//     const { path: oldPath, originalname } = req.file;
+
+//     const filename = `${_id}_${originalname}`;
+  
+//     const newPath = path.join(avatarsPath, filename);
+  
+//     Jimp.read(oldPath, (err, img) => {
+//       if (err) throw err;
+//       img.resize(250, 250).write(newPath);
+//     });
+  
+//     await fs.rename(oldPath, newPath);
+  
+//     const avatarURL = path.join('avatars', filename);
+//     await User.findByIdAndUpdate(_id,{ avatarURL});
+//     return res.json({ avatarURL });
+//   };
 
 
 export default {
@@ -107,5 +130,6 @@ export default {
     logout: ctrlWrapper(logout),
     updateAvatar: ctrlWrapper(updateAvatar),
 };
+
 
 
