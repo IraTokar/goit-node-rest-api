@@ -29,7 +29,8 @@ const register = async (req, res) => {
 
     const verificationToken = nanoid();
 
-    const newUser = User.create({ ...req.body, password: hashPassword, avatarURL, verificationToken });
+    const newUser = await User.create({ ...req.body, password: hashPassword, avatarURL, verificationToken });
+    console.log(newUser)
 
     const verifyEmail = {
         to: email,
@@ -47,18 +48,33 @@ const register = async (req, res) => {
 
 const verifyEmail = async (req, res) => {
     const { verificationToken } = req.params;
-    const user = await User.findOne({ verificationToken });
+    console.log("Отримано verificationToken:", verificationToken);
+    const user = await User.findOne( {verificationToken});
+    console.log("Користувач знайдений:", user);
     if (!user) {
         throw HttpError (404, 'User not found')
     };
-
+   
     await User.findByIdAndUpdate(user._id, { verify: true, verificationToken: "" });
     res.status(200).json({ message: "Verification successful" });
 };
 
+// const verifyEmail = async(req, res)=> {
+//     const {verificationToken} = req.params;
+//     const user = await User.findOne({verificationToken});
+//     if(!user){
+//         throw HttpError(401, "Email not found")
+//     }
+//     await User.findByIdAndUpdate(user._id, {verify: true, verificationToken: ""});
+
+//     res.json({
+//         message: "Email verify success"
+//     })
+// }
+
 const resendVerifyEmail = async (req, res) => {
     const { email } = req.body;
-    const user = User.findOne({ email });
+    const user = await User.findOne({ email });
     if (!user) {
         throw HttpError(400, 'Missing required field email')
     }
@@ -72,7 +88,7 @@ const resendVerifyEmail = async (req, res) => {
         html: `<a href= "${BASE_URL}/api/auth/verify/${user.verificationToken}" target="_blank">Click to verify email</a>`
     };
 
-    await sendEmail(mail);
+    await sendEmail(verifyEmail);
 
     res.status(200).json({
         message: "Verification email sent",
